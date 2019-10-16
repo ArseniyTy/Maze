@@ -1,10 +1,7 @@
 ﻿using System;
 using MazeLibrary;
-
-/*TODO
- * 1) Туман войны не проходит сквозь стены
- * 2) Генерация лабиринта всё же странноватая
-*/
+using MazeLibrary.Generation_algorithms;
+using MazeLibrary.Interfaces;
 
 namespace MazeDrawer
 {
@@ -12,9 +9,11 @@ namespace MazeDrawer
     {
         static void Main()
         {
-            var beginInstructions = "1)Press ESC to quit\n2)Press S to set the size of the Maze\n3)Press ENTER to start\n";
+            var beginInstructions = "1)Press ESC to quit\n2)Press S to set the size of the Maze\n3)Press Q to set generation algorithm\n4)Press ENTER to start\n";
+            var genAlgoInstructions = "1)Press A to set NeighborGeneration algorithm\n2)Press B to set SillyGeneration algorithm";
             var instructions = "1)Press ESC to quit\n2)Press R to restart\n3)Control your hero with W,A,S,D or arrows\n";
             int mazeWidth = 20, mazeHeight = 20;
+            IGeneration generator=null;
             var key = new ConsoleKeyInfo();
             while (true)
             {
@@ -36,9 +35,28 @@ namespace MazeDrawer
                             mazeHeight = int.Parse(Console.ReadLine());
                             break;
                         }
+                    case ConsoleKey.Q:
+                        {
+                            Console.WriteLine(genAlgoInstructions);
+                            key = Console.ReadKey();
+                            switch (key.Key)
+                            {
+                                case ConsoleKey.A:
+                                    {
+                                        generator = new NeighborGeneration();
+                                        break;
+                                    }
+                                case ConsoleKey.B:
+                                    {
+                                        generator = new SillyGeneration();
+                                        break;
+                                    }
+                            }
+                            break;
+                        }
                     case ConsoleKey.Enter:
                         {
-                            Maze maze = new Maze(mazeWidth, mazeHeight);
+                            Maze maze = new Maze(mazeHeight, mazeWidth, generator);
                             Player.GetPlayer.SetRandomCoordinates(maze);
 
                             Console.WriteLine(instructions + Drawer.Create(maze));
@@ -51,28 +69,28 @@ namespace MazeDrawer
                                     case ConsoleKey.W:
                                     case ConsoleKey.UpArrow:
                                         {
-                                            maze.TryToStep(Direction.Up);
+                                            maze.TryToMove(Direction.Up);
                                             break;
                                         }
 
                                     case ConsoleKey.A:
                                     case ConsoleKey.LeftArrow:
                                         {
-                                            maze.TryToStep(Direction.Left);
+                                            maze.TryToMove(Direction.Left);
                                             break;
                                         }
 
                                     case ConsoleKey.D:
                                     case ConsoleKey.RightArrow:
                                         {
-                                            maze.TryToStep(Direction.Right);
+                                            maze.TryToMove(Direction.Right);
                                             break;
                                         }
 
                                     case ConsoleKey.S:
                                     case ConsoleKey.DownArrow:
                                         {
-                                            maze.TryToStep(Direction.Down);
+                                            maze.TryToMove(Direction.Down);
                                             break;
                                         }
 

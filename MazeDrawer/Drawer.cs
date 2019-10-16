@@ -5,8 +5,16 @@ using MazeLibrary;
 
 namespace MazeDrawer
 {
+    /// <summary>
+    /// Static class that contains methods to draw a maze.
+    /// </summary>
     public static class Drawer
     {
+        /// <summary>
+        /// Drawes maze in console.
+        /// </summary>
+        /// <param name="maze">Our current maze</param>
+        /// <returns></returns>
         public static string Create(Maze maze)
         {
             var mazeStr = new StringBuilder((maze.Width+2)*maze.Height);
@@ -36,7 +44,7 @@ namespace MazeDrawer
                             mazeStr.Append(maze[j, i].Skin);
                         }
                         else
-                        {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        {//!!!!!!!!!!!!uncomment to see all the maze!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             //mazeStr.Append(maze[j, i].Skin);
                             mazeStr.Append('~');
                         }

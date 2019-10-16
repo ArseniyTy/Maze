@@ -3,150 +3,79 @@ using System.Collections.Generic;
 using System.Linq;
 using MazeLibrary.Cells;
 using MazeLibrary.Interfaces;
+using MazeLibrary.Generation_algorithms;
 
 namespace MazeLibrary
 {
+    /// <summary>
+    /// Contains info about maze and provides convenient access to cells of the maze.
+    /// <para>Implements <c>IMaze</c>.</para>
+    /// </summary>
     public class Maze : IMaze
     {
+        /// <summary>
+        /// Contains the generation algorithm.
+        /// </summary>
+        private IGeneration generator;
+        /// <summary>
+        /// Sets the generation algorithm (saves in generator).
+        /// </summary>
+        /// <param name="genAlgo">Generation algotithm</param>
+        public void SetGenerationAlgorithm(IGeneration genAlgo)
+        {
+            generator = genAlgo;
+        }
+        /// <summary>
+        /// Gets the height of the maze.
+        /// </summary>
         public int Height { get; }
+        /// <summary>
+        /// Gets the width of the maze.
+        /// </summary>
         public int Width { get; }
+        /// <summary>
+        /// Contains all the cells of the maze.
+        /// </summary>
         public List<BaseCell> Cells { get; } = new List<BaseCell>();
 
-        public Maze(int height, int width)
+        /// <summary>
+        /// Constructor of the <c>Maze</c> (with its generation).
+        /// </summary>
+        /// <param name="height">Height of the maze.</param>
+        /// <param name="width">Width of the maze.</param>
+        /// <param name="generatorAlgo">Generation algorithm</param>
+        public Maze(int height, int width, IGeneration generatorAlgo = null)
         {
             this.Height = height;
             this.Width = width;
 
-            MazeGeneration();
+            if(generatorAlgo != null)
+                Cells = generatorAlgo.GenerateMaze(height, width);
+            else
+            {
+                if(generator==null)
+                    SetGenerationAlgorithm(new NeighborGeneration());
+                Cells = generator.GenerateMaze(height, width);
+            }
+                
         }
-
-        private void MazeGeneration()
+        /// <summary>
+        /// Simple constructor of the <c>Maze</c>.
+        /// </summary>
+        /// <param name="height">Height of the maze.</param>
+        /// <param name="width">Width of the maze.</param>
+        internal Maze(int height, int width)
         {
-            for (int y = 1; y < Height-1; y++)
-            {
-                for (int x = 1; x < Width-1; x++)
-                {
-                    Cells.Add(new Ground(x, y));
-                }
-            }
-
-            var rnd = new Random();
-            int xRnd = rnd.Next(1, Width - 1);
-            int yRnd = rnd.Next(1, Height - 1);
-
-
-            var wallsStack = new Stack<BaseCell>();
-            this[xRnd, yRnd] = new Wall(xRnd, yRnd);
-            wallsStack.Push(this[xRnd, yRnd]);
-
-
-            while (wallsStack.Count!=0)
-            {
-                BaseCell cell = wallsStack.Peek();
-                var cellsToBuildWall = new List<BaseCell>();
-
-
-                //доступные для постройки клетки
-                BaseCell[] cellsToBuild = { this[cell.X - 1, cell.Y], this[cell.X + 1, cell.Y], this[cell.X, cell.Y-1], this[cell.X, cell.Y + 1] };
-                foreach (var cellToBuild in cellsToBuild)
-                {
-                    if (cellToBuild?.TryToStep() ?? false) //если земля
-                    {
-                        bool noNeib = true;
-                        //соседи клетки, которая является землёй
-                        BaseCell[] cellsNeib = new BaseCell[5];
-
-                        //соседи выбираются из той стороны, куда походили
-                        #region InisializingNeighbours
-                        if (cellToBuild == this[cell.X - 1, cell.Y])
-                        {
-                            cellsNeib[0] = this[cellToBuild.X - 1, cellToBuild.Y - 1];
-                            cellsNeib[1] = this[cellToBuild.X - 1, cellToBuild.Y + 1];
-                            cellsNeib[2] = this[cellToBuild.X - 2, cellToBuild.Y - 1];
-                            cellsNeib[3] = this[cellToBuild.X - 2, cellToBuild.Y];
-                            cellsNeib[4] = this[cellToBuild.X - 2, cellToBuild.Y + 1];
-                        }
-                        else if (cellToBuild == this[cell.X + 1, cell.Y])
-                        {
-                            cellsNeib[0] = this[cellToBuild.X + 1, cellToBuild.Y - 1];
-                            cellsNeib[1] = this[cellToBuild.X + 1, cellToBuild.Y + 1];
-                            cellsNeib[2] = this[cellToBuild.X + 2, cellToBuild.Y - 1];
-                            cellsNeib[3] = this[cellToBuild.X + 2, cellToBuild.Y];
-                            cellsNeib[4] = this[cellToBuild.X + 2, cellToBuild.Y + 1];
-                        }
-                        else if (cellToBuild == this[cell.X, cell.Y - 1])
-                        {
-                            cellsNeib[0] = this[cellToBuild.X - 1, cellToBuild.Y - 1];
-                            cellsNeib[1] = this[cellToBuild.X + 1, cellToBuild.Y - 1];
-                            cellsNeib[2] = this[cellToBuild.X - 1, cellToBuild.Y - 2];
-                            cellsNeib[3] = this[cellToBuild.X, cellToBuild.Y - 2];
-                            cellsNeib[4] = this[cellToBuild.X + 1, cellToBuild.Y - 2];
-                        }
-                        else if (cellToBuild == this[cell.X, cell.Y + 1])
-                        {
-                            cellsNeib[0] = this[cellToBuild.X - 1, cellToBuild.Y + 1];
-                            cellsNeib[1] = this[cellToBuild.X + 1, cellToBuild.Y + 1];
-                            cellsNeib[2] = this[cellToBuild.X - 1, cellToBuild.Y + 2];
-                            cellsNeib[3] = this[cellToBuild.X, cellToBuild.Y + 2];
-                            cellsNeib[4] = this[cellToBuild.X + 1, cellToBuild.Y + 2];
-                        }
-                        #endregion
-
-                        foreach (var neib in cellsNeib)
-                        {
-                            if (!(neib?.TryToStep() ?? true))
-                            {
-                                noNeib = false; //у стены в нужной плоскости есть сосед-стена
-                                break;
-                            }
-                        }
-                        if(noNeib)
-                        {
-                            cellsToBuildWall.Add(cellToBuild);
-                        }
-                    }
-                }
-                
-                
-
-                if (cellsToBuildWall.Count==0)
-                {
-                    wallsStack.Pop();
-                }
-                else
-                {
-                    int indToBuild = rnd.Next(0, cellsToBuildWall.Count);
-                    BaseCell newCell = cellsToBuildWall[indToBuild];
-
-                    this[newCell.X, newCell.Y] = new Wall(newCell.X, newCell.Y);
-                    wallsStack.Push(this[newCell.X, newCell.Y]);
-                }
-                
-            }
-            for (int x = 0; x < Width; x++)
-            {
-                if(this[x,0]==null)
-                {
-                    Cells.Add(new Ground(x, 0));
-                }
-                if (this[x, Height - 1] == null)
-                {
-                    Cells.Add(new Ground(x, Height - 1));
-                }
-            }
-            for (int y = 0; y < Height; y++)
-            {
-                if (this[0, y] == null)
-                {
-                    Cells.Add(new Ground(0, y));
-                }
-                if (this[Width-1, y] == null)
-                {
-                    Cells.Add(new Ground(Width - 1, y));
-                }
-            }
+            this.Height = height;
+            this.Width = width;
         }
 
+        /// <summary>
+        /// Provides a convenient access to the <c>List<BaseCell> Cells</c> by X-Y value.
+        /// </summary>
+        /// <param name="x">X position of the cell</param>
+        /// <param name="y">X position of the cell</param>
+        /// <returns>the needed cell</returns>
         public BaseCell this[int x, int y]
         {
 
@@ -168,8 +97,11 @@ namespace MazeLibrary
             }
         }
 
-
-        public void TryToStep(Direction direction)
+        /// <summary>
+        /// Moves the player to the needed cell.
+        /// </summary>
+        /// <param name="direction">The type of movement(Up,Down,Right,Left).</param>
+        public void TryToMove(Direction direction)
         {
             BaseCell cellToMove = null;
 
