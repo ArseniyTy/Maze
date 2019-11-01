@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29318.209
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeLibrary", "MazeLibary\MazeLibrary.csproj", "{C9362EE7-E035-4F9A-970B-F86D93D71AE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeDrawer", "MazeDrawer\MazeDrawer.csproj", "{B194AF31-92FE-46C7-953B-6E945E86D816}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeDrawer", "MazeDrawer\MazeDrawer.csproj", "{B194AF31-92FE-46C7-953B-6E945E86D816}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MazeLibrary.Tests", "MazeLibrary.Tests\MazeLibrary.Tests.csproj", "{FC04D99C-3330-49F3-9FC2-38BA40091AC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{B194AF31-92FE-46C7-953B-6E945E86D816}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B194AF31-92FE-46C7-953B-6E945E86D816}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B194AF31-92FE-46C7-953B-6E945E86D816}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC04D99C-3330-49F3-9FC2-38BA40091AC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC04D99C-3330-49F3-9FC2-38BA40091AC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC04D99C-3330-49F3-9FC2-38BA40091AC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC04D99C-3330-49F3-9FC2-38BA40091AC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

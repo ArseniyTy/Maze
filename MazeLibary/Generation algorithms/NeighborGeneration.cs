@@ -22,6 +22,22 @@ namespace MazeLibrary.Generation_algorithms
         public List<BaseCell> GenerateMaze(int height, int width)
         {
             Maze maze = new Maze(height, width);
+
+            //просто если меньше 2, то там след цикл не работает в алгоритме
+            if (height < 2 || width < 2)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < height; j++)
+                    {
+                        maze[i, j] = new Ground(i, j);
+                    }
+                }
+                return maze.Cells;
+            }
+
+
+
             for (int y = 1; y < maze.Height - 1; y++)
             {
                 for (int x = 1; x < maze.Width - 1; x++)

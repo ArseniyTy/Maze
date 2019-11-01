@@ -28,11 +28,37 @@ namespace MazeLibrary
         /// <summary>
         /// Gets the height of the maze.
         /// </summary>
-        public int Height { get; }
+        private int height;
+        public int Height 
+        {
+            get { return height; }
+            private set
+            {
+                if (value < 1)
+                {
+                    value = 1;
+                }
+                height = value;
+            }
+        }
+
+
         /// <summary>
         /// Gets the width of the maze.
         /// </summary>
-        public int Width { get; }
+        private int width;
+        public int Width
+        {
+            get { return width; }
+            private set
+            {
+                if (value < 1)
+                {
+                    value = 1;
+                }
+                width = value;
+            }
+        }
         /// <summary>
         /// Contains all the cells of the maze.
         /// </summary>
@@ -50,12 +76,12 @@ namespace MazeLibrary
             this.Width = width;
 
             if(generatorAlgo != null)
-                Cells = generatorAlgo.GenerateMaze(height, width);
+                Cells = generatorAlgo.GenerateMaze(Height, Width);
             else
             {
                 if(generator==null)
                     SetGenerationAlgorithm(new NeighborGeneration());
-                Cells = generator.GenerateMaze(height, width);
+                Cells = generator.GenerateMaze(Height, Width);
             }
                 
         }
