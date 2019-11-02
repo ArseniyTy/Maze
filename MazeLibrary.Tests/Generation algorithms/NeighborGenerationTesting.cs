@@ -35,16 +35,16 @@ namespace MazeLibrary.Tests.Generation_algorithms
         public void CheckingIfYouCanMoveFromAnyGroundOfTheMazeToAnyOtherGroundOfTheMaze(/*int width, int height, IGeneration algo*/TestingMazeConstructor ts)
         {
             var _maze = new Maze(ts.height, ts.width, ts.generation);
-            var neighbs = new List<Ground>();
-            var ground = _maze[0,0];
-            while (!(ground is Ground))
-            {
-                Random random = new Random();
-                int randY = random.Next(0, ts.height);
-                int randX = random.Next(0, ts.height);
-                ground = _maze[randX, randY];
-            }
-            neighbs.Add((Ground)ground); //ничего не потеряем, т.к. ground 100 пудов объект класса Ground
+            IList<IBaseCell> neighbs = new List<IBaseCell>();
+            IBaseCell ground = _maze[0,0];
+            //while (!(ground is Ground))
+            //{
+            //    Random random = new Random();
+            //    int randY = random.Next(0, ts.height);
+            //    int randX = random.Next(0, ts.height);
+            //    ground = _maze[randX, randY];
+            //}
+            neighbs.Add(ground); //ничего не потеряем, т.к. ground 100 пудов объект класса Ground
 
 
             //будем добавлять соседей клеток в общий список
@@ -53,14 +53,14 @@ namespace MazeLibrary.Tests.Generation_algorithms
             while(k< neighbs.Count)
             {
                 ground = neighbs[k];
-                IList<IBaseCell> neibghsOfGr = new List<IBaseCell> { _maze[ground.X - 1, ground.Y], _maze[ground.X + 1, ground.Y], _maze[ground.X, ground.Y - 1], _maze[ground.X, ground.Y + 1] };
+                IEnumerable<IBaseCell> neibghsOfGr = new List<IBaseCell> { _maze[ground.X - 1, ground.Y], _maze[ground.X + 1, ground.Y], _maze[ground.X, ground.Y - 1], _maze[ground.X, ground.Y + 1] };
                 foreach(var ne in neibghsOfGr)
                 {
                     if(ne is Ground)
                     {
-                        if(!ItemIsInList(neighbs, (Ground)ne))
+                        if(!ItemIsInList(neighbs, ne))
                         {
-                            neighbs.Add((Ground)ne);
+                            neighbs.Add(ne);
                         }
                     }
                 }
@@ -77,13 +77,13 @@ namespace MazeLibrary.Tests.Generation_algorithms
                 {
                     if (_maze[i,j] is Ground)
                     {
-                        Assert.IsTrue(ItemIsInList(neighbs, (Ground)_maze[i, j]));
+                        Assert.IsTrue(ItemIsInList(neighbs, _maze[i, j]));
                     }
                 }
             }
 
         }
-        private bool ItemIsInList(List<Ground> items, Ground item)
+        private bool ItemIsInList(IList<IBaseCell> items, IBaseCell item)
         {
             foreach(var it in items)
             {
